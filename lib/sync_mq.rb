@@ -11,7 +11,15 @@ class SyncMQ < MQ
   class << self
     def start_reactor
       unless EM.reactor_running?
-        @@thread = Thread.new { EM.run } if @@thread.nil? || !@@thread.alive?
+        if @@thread.nil? || !@@thread.alive?
+          current = Thread.current
+          @@thread = Thread.new do 
+            EM.run do
+              EM.next_tick(current.wakeup)
+            end
+          end 
+          current.stop
+        end
       end
     end
   end
