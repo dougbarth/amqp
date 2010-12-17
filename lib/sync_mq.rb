@@ -18,7 +18,7 @@ class SyncMQ < MQ
               EM.next_tick(current.wakeup)
             end
           end 
-          current.stop
+          Thread.stop
         end
       end
     end
